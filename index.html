@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Caching at the Edge: CDNs for everyone</title>
+
+		<meta name="author" content="Wim Leers &amp; Fabian Franz">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="src/reveal/css/reveal.css">
+		<link rel="stylesheet" href="src/reveal/css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="src/reveal/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'src/reveal/css/print/pdf.css' : 'src/reveal/css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="src/reveal/lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h1>Caching at the Edge</h1>
+					<h3>CDNs for everyone</h3>
+					<p>
+						<ul>
+							<li>Fabian Franz <small style="vertical-align: baseline">(<a href="https://tag1consulting.com/">Tag1 Consulting</a> — <a href="https://twitter.com/fabianfranz">@fabianfranz</a>)</small></li>
+							<li>Wim Leers <small style="vertical-align: baseline">(<a href="https://acquia.com/">Acquia</a> — <a href="https://twitter.com/wimleers">@wimleers</a> — <a href="http://wimleers.com/">wimleers.com</a>)</small></li>
+						</ul>
+					</p>
+				</section>
+
+				<!-- Wim -->
+				<section>
+					<section>
+						<h2>Why?</h2>
+						<span><p>Why do this: a quick reminder</p></span>
+					</section>
+					<section>
+						<h2><q>The edge?</q></h2>
+						<aside class="notes">
+							Your origin usually lives in one data center. Not all your end users live close that data center. The further away the end user is, the slower your site will be — this is latency. 
+							<q>The edge</q> are servers very close to your end users. CDNs are an easy way to host content at the edge: without CDNs, everybody would have to set up servers close to all of their end users all over the world.
+						</aside>
+					</section>
+					<section>
+						<h2>Using a CDN</h2>
+						<p><em>assets</em>  ⟷ <em>HTML</em></p>
+						<aside class="notes">
+							There are essentially two ways of using a CDN:
+							<ol>
+								<li>Use it just for assets; the HTML is still served from your origin. The advantage is that this is easy; you don't have to deal with problems like cache invalidation or authenticated user traffic.</li>
+								<li>Use it for HTML, i.e. for serving the actual pages of your site. Greater benefits, but also requires a lot of complex setup.</li>
+						</aside>
+					</section>
+					<section>
+						<q>Why?</q>
+						<p>Because closer to the end user (less latency)</p>
+					</section>
+				</section>
+				
+				<section>
+					<p>This talk is about using a CDN to cache the HTML.</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Drupal 7</h2>
+					</section>
+					<section>
+						<h3>Invalidation: simple</h3>
+						<p><code>max-age = 300</code></p>
+						<p>… but stale content!</p>
+					</section>
+					<section>
+						<h3>Invalidation: advanced</h3>
+						<p>Purge affected URLs<p>
+						<p>… but brittle!</p>
+					</section>
+					<section>
+						<img src="img/acquia-purge-queuing-elb-support.png">
+						<aside class="notes">
+							This shows the <a href="https://www.drupal.org/project/acquia_purge">Acquia Purge</a> module in action, which automates the purging of affected URLs. But this is also not at all a comprehensive solution: some content may still be missed.
+						</aside>
+					</section>
+					<section>
+						<h3>In practice</h3>
+						<ul>
+							<li>Combination of both</li>
+							<li>Allow content editors to purge manually</li>
+							<li>… site-specific hacks</li>
+						</ul>
+						<aside class="notes">
+							In practice, the combination of both ensures that <code>max-age</code> handles the URLs that we forgot to purge. When content editors want to see the updated or new content immediately, they're often given the ability to purge manually. And beyond that, many sites have their own hacks/work-arounds that match <em>their</em> specific needs.
+						</aside>
+					</section>
+					<section>
+						<h3>Authenticated users</h3>
+						<p>Separate domain  ⟷ passthrough</p>
+						<p><em>Nothing is cached!</em></p>
+						<aside class="notes">
+							Since we cannot reliably know which parts of the page are personalized, and personalized to which extent (per role, per permission or even per user?), and we can <em>definitely</em> not know this for parts of the page generated by contributed modules, we have very few options.
+							Hence 99% of Drupal 7 sites that use a CDN for their HTML choose to not cache it at all.
+						</aside>
+					</section>
+				</section>
+				
+				<!-- Wim -->
+				<section>
+					<section>
+						<h2>Drupal 8</h2>
+					</section>
+					<section>
+						<p>Better architecture.</p>
+						<p>No more hacks.</p>
+						<aside class="notes">
+							The goal was simple: remove the need for all these hacks.
+						</aside>
+					</section>
+					<section>
+						<table>
+							<tr><td style="border-bottom: none;">invalidation</td><td style="border-bottom: none;">➞</td><td style="border-bottom: none;">cache tags</td></tr>
+							<tr><td>authenticated users</td><td>➞</td><td>cache contexts</td></tr>
+						</table>
+						<aside class="notes">
+							Two new concepts, two solved problems.
+							Fixing the problems with architecture. We don't want stale content. We don't want to determine all the URLs that a piece of content appears on.
+						</aside>
+					</section>
+					<section>
+						<table>
+							<tr><td style="border-bottom: none;">cache tags</td><td style="border-bottom: none;">≈</td><td style="border-bottom: none;">data dependencies</td></tr>
+							<tr><td>cache contexts</td><td>≈</td><td>request context dependencies</td></tr>
+						</table>
+						<aside class="notes">
+							More details later, for now this is all you need to know.
+							For invalidation, we have cache tags, which reflect data dependencies: when data changes, cache tags are invalidated, which ensure correct invalidation on the CDN.
+							For authenticated users — or really, personalized pages in general — we have cache contexts. They reflect request context dependencies. This ensures the CDN can still cache pages that are not actually personalized, or for advanced setups, it can actually cache personalized parts of the page right in the CDN.
+						</aside>
+					</section>
+				</section>
+
+				<!-- Wim -->
+				<section>
+					<section>
+						<h2>Demo 1: anon traffic</h2>
+						<ul>
+							<li>Drupal 8 beta 15</li>
+							<li class="fragment">CloudFlare module — <a href="https://github.com/d8-contrib-modules/cloudflare">GH/d8-contrib-modules/cloudflare</a></li>
+							<li class="fragment">Composer Manager — <a href="https://www.drupal.org/project/composer_manager">d.o/project/composer_manager</a></li>
+							<li class="fragment">CloudFlare SDK — <a href="https://github.com/aweingarten/cloudflarephpsdk">GH/aweingarten/cloudflarephpsdk</a></li>
+							<li class="fragment">CloudFlare account <em>— Enterprise plan required for now</em></li>
+						</ul>
+					</section>
+					<section>
+						<p>Demo!</p>
+					</section>
+				</section>
+
+				<!-- Fabian -->
+				<section>
+					<section>
+						<h2>Demo 2: auth traffic</h2>
+						<ul>
+							<li>Drupal 8 beta 15</li>
+							<li class="fragment">Fastly module — <a href="https://www.drupal.org/project/fastly">d.o/project/fastly</a></li>
+							<li class="fragment">Fastly account</li>
+						</ul>
+					</section>
+					<section>
+						<p>Demo!</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<p>So, Drupal 8 can be super fast!</p>
+						<p>It can be cached at the edge.</p>
+						<p>Without the pain of other CMSes, including Drupal 7.</p>
+					</section>
+					<section>
+						<p>It <em>just</em> requires all of us to think of a few things while developing custom modules or contributed modules.</p>
+					</section>
+				</section>
+
+				<!-- Wim -->
+				<section>
+					<section>
+						<h2>The thought process</h2>
+						<p>The theory of how we make Drupal fast</p>
+					</section>
+					<section>
+						<h3>Dependencies, dependencies, dependencies!</h3>
+						<ul class="fragment">
+							<li>Drupal 7 didn't track <em>any</em> dependencies
+							<li class="fragment">e.g. <code>drupal_add_css()</code>, <code>drupal_add_js()</code> …
+							</li>
+							<li class="fragment red">⇒ impossible to cache</li>
+							<li class="fragment green">⇒ <code>#attached</code> asset libraries solve that</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Dependencies, dependencies, dependencies!</h3>
+						<ul>
+							<li>Drupal 7 didn't track <em>any</em> dependencies
+							<li class="fragment">e.g. <a href="https://api.drupal.org/api/drupal/includes%21common.inc/function/url/7"><code>url()</code></a>'s output depended on:
+								<ul style="font-size: 70%">
+									<li class="fragment"><code>&lt;front&gt;</code> configuration
+									<li class="fragment">HTTPS configuration
+									<li class="fragment">clean URL configuration
+									<li class="fragment">current site in multisite
+									<li class="fragment">current host name
+									<li class="fragment">path processing
+										<ul>
+											<li class="fragment">negotiated interface language
+											<li class="fragment">negotiated URL language
+											<li class="fragment">…</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li class="fragment red">⇒ impossible to <del>cache</del> <ins>invalidate</ins></li>
+							<li class="fragment"><em> … yet many of us did it anyway!</em></li>
+						</ul>
+					</section>
+					<section>
+						<h3>Correct invalidation in Drupal 8</h3>
+						<ul>
+							<li>Cache tags <small class="fragment">(data dependencies)</small>
+							<li>Cache contexts <small class="fragment">(context dependencies)</small>
+							<li>Cache max-age <small class="fragment">(time dependencies)</small>
+						</ul>
+						<div class="fragment">
+							<p>+</p>
+							<p>Cacheability bubbled during rendering!</p>
+						</div>
+					</section>
+					<section>
+						<h3>In practice</h3>
+						<p>Try to make this thought process a habit:</p>
+					</section>
+					<section>
+						<h3>1.</h3>
+						<blockquote>I'm rendering something. That means I must think of cacheability!</blockquote>
+					</section>
+					<section>
+						<h3>2.</h3>
+						<blockquote>Is this something that's expensive to render, and therefore is worth caching?</blockquote>
+						<p>↪︎ If "yes": <strong>cache keys</strong></p>
+						<pre class="fragment" style="margin-top: 3em; width: 70%"><code class="php">$build['#cache']['keys'] = ['node', 5, 'teaser'];</code></pre>
+					</section>
+					<section>
+						<h3>3.</h3>
+						<blockquote>Does the representation of the thing I'm rendering vary per combination of permissions, per URL, per interface language, per … something?</blockquote>
+						<p>↪︎ If "yes": <strong>cache contexts</strong></p>
+						<pre class="fragment" style="margin-top: 3em; width: 70%"><code class="php">$build['#cache']['contexts'][] = 'user.permissions';
+$build['#cache']['contexts'][] = 'url';
+</code></pre>
+						<p class="fragment"><small>~ HTTP's <code>Vary</code> header</small></p>
+					</section>
+					<section>
+						<h3>4.</h3>
+						<blockquote>What causes the representation of the thing I'm rendering become outdated?</blockquote>
+						<p>↪︎ If "yes": <strong>cache tags</strong></p>
+						<pre class="fragment" style="margin-top: 3em; width: 70%"><code class="php">$build['#cache']['tags'][] = 'node:5';
+$build['#cache']['tags'][] = 'user:3';
+$build['#cache']['tags'][] = 'taxonomy_term:23';
+</code></pre>
+					</section>
+					<section>
+						<h3>5.</h3>
+						<blockquote>When does the representation of the thing I'm rendering become outdated?</blockquote>
+						↪︎ If "yes": <strong>cache max-age</strong>
+						<pre class="fragment" style="margin-top: 3em; width: 70%"><code class="php">$build['#cache']['max-age'] = Cache::PERMANENT;</code></pre>
+						<p class="fragment"><small>~ HTTP's <code>Cache-Control: max-age</code> header</small></p>
+					</section>
+					<section>
+						<p>To make it easier:</p>
+						<p><small><code class="php">Renderer::addCacheableDependency($build, $dependency)</code></small></p>
+						<pre class="fragment"><code class="php">$site_config = $this->config->get('system.site');
+
+$build = [
+  '#markup' => t('Welcome to @site, @user!', $site_config->get('name')),
+];
+$this->renderer->addCacheableDependency($build, $site_config)</code></pre>
+					</section>
+					<section>
+						<img src="img/ideal-case.jpg" />
+					</section>
+					<section>
+						<h3>If Drupal pages were ships…</h3>
+						<p>(Drupal rendering a page ~ building a ship)</p>
+					</section>
+					<section>
+						<h3>… then this could be Drupal 8…</h3>
+						<figure>
+							<img src="img/lego-ship-drupal8.jpg">
+							<figcaption>Assembled from components. Clear dependencies.</figcaption>
+						</figure>
+					</section>
+					<section>
+						<h3>… and this would be Drupal 7</h3>
+						<figure>
+							<img src="img/lego-ship-drupal7.jpg">
+							<figcaption>Assembled from seemingly random pieces. <em>But it is a boat!</em></figcaption>
+						</figure>
+					</section>
+				</section>
+
+				<!-- Fabian -->
+				<section>
+					<section>
+						<h2>BigPipe, hybrid render strategies</h2>
+						<p>Come see our other session tomorrow!</p>
+						<p><a href="https://events.drupal.org/barcelona2015/sessions/making-drupal-fly-fastest-drupal-ever-here">Making Drupal fly - The fastest Drupal ever is here!</a></p>
+					</section>
+				</section>
+				
+				<!-- Wim -->
+				<section>
+					<section>
+						<h2>Peek at the future</h2>
+						<h3>Service workers</h3>
+						<p><a href="http://www.w3.org/TR/service-workers/">w3.org/TR/service-workers/</a></p>
+						<p><a href="http://www.html5rocks.com/en/tutorials/service-worker/introduction/">html5rocks.com/en/tutorials/service-worker/introduction/</a>
+					</section>
+					<section>
+						<p>A client-side reverse proxy!</p>
+						<p>Logic defined in JavaScript!</p>
+					</section>
+					<section>
+						<ol style="min-width: 17em">
+							<li>Cache pages on the client</li>
+							<li>Send cache tag invalidations to clients</li>
+							<li>Pages cached on the client invalidated</li>
+						</ol>
+					</section>
+					<section>
+						<img src="img/caniuse-serviceworkers.png">
+						<a href="http://caniuse.com/serviceworkers">caniuse.com/serviceworkers</a>
+					</section>
+				</section>
+
+				<!-- Wim + Fabian -->
+				<section data-transition="zoom" >
+					<h2>Questions?</h2>
+					<p><a href="http://wimleers.com/talk/caching-at-the-edge-cdns-for-everyone">wimleers.com/talk/caching-at-the-edge-cdns-for-everyone</a></p>
+					<h4 style="margin-top: 2em">Docs</h4>
+					<p><a href="https://www.drupal.org/developing/api/8/cache">d.o/developing/api/8/cache</a> + <a href="https://www.drupal.org/developing/api/8/cache/tags">/tags</a> + <a href="https://www.drupal.org/developing/api/8/cache/contexts">/contexts</a></p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="src/reveal/lib/js/head.min.js"></script>
+		<script src="src/reveal/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'src/reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'src/reveal/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'src/reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'src/reveal/plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'src/reveal/plugin/zoom-js/zoom.js', async: true },
+					{ src: 'src/reveal/plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
