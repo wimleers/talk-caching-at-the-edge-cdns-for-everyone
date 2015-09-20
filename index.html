@@ -330,9 +330,26 @@ $build['#cache']['tags'][] = 'taxonomy_term:23';
 					<section>
 						<h3>5.</h3>
 						<blockquote>When does the representation of the thing I'm rendering become outdated?</blockquote>
-						↪︎ If "yes": <strong>cache max-age</strong>
+						<p>↪︎ If "yes": <strong>cache max-age</strong>.</p>
 						<pre class="fragment" style="margin-top: 3em; width: 70%"><code class="php">$build['#cache']['max-age'] = Cache::PERMANENT;</code></pre>
 						<p class="fragment"><small>~ HTTP's <code>Cache-Control: max-age</code> header</small></p>
+					</section>
+					<section>
+						<p>All relevant objects provide cacheability metadata!</p>
+						<pre><code class="php">interface CacheableDependencyInterface {
+  public function getCacheContexts();
+  public function getCacheTags();
+  public function getCacheMaxAge();
+}</code></pre>
+						<div class="fragment">
+							<p>Implemented by:</p>
+							<ul>
+								<li>configuration + entities (content &amp; config)</li>
+								<li>access results</li>
+								<li>block, context, condition plugins</li>
+								<li>…</li>
+							</ul>
+						</div>
 					</section>
 					<section>
 						<p>To make it easier:</p>
@@ -392,7 +409,7 @@ $this->renderer->addCacheableDependency($build, $site_config)</code></pre>
 						<ol style="min-width: 17em">
 							<li>Cache pages on the client</li>
 							<li>Send cache tag invalidations to clients</li>
-							<li>Pages cached on the client invalidated</li>
+							<li>Pages cached invalidated on the client</li>
 						</ol>
 					</section>
 					<section>
