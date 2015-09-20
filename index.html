@@ -62,7 +62,7 @@
 				<section>
 					<section>
 						<h2>Why?</h2>
-						<span><p>Why do this: a quick reminder</p></span>
+						<span><p>Why do this: a quick reminder.</p></span>
 					</section>
 					<section>
 						<h2><q>The edge?</q></h2>
@@ -83,7 +83,7 @@
 					</section>
 					<section>
 						<q>Why?</q>
-						<p>Because closer to the end user (less latency)</p>
+						<p>Because closer to the end user (less latency).</p>
 					</section>
 				</section>
 				
@@ -226,9 +226,9 @@
 					</section>
 					<section>
 						<p>Standardized solution for a complex problem.</p>
-						<p><del>Out of</del> <ins>Within</ins> reach for 99%</p>
-						<p>Unmatched</p>
-						<p>Some hosting providers will step up</p>
+						<p><del>Out of</del> <ins>Within</ins> reach for 99%.</p>
+						<p>Unmatched.</p>
+						<p>Some hosting providers will step up.</p>
 					</section>
 				</section>
 
@@ -247,7 +247,7 @@
 				<section>
 					<section>
 						<h2>The thought process</h2>
-						<p>The theory of how we make Drupal fast</p>
+						<p>The theory of how we make Drupal fast.</p>
 					</section>
 					<section>
 						<h3>Dependencies, dependencies, dependencies!</h3>
@@ -255,8 +255,8 @@
 							<li>Drupal 7 didn't track <em>any</em> dependencies
 							<li class="fragment">e.g. <code>drupal_add_css()</code>, <code>drupal_add_js()</code> …
 							</li>
-							<li class="fragment red">⇒ impossible to cache</li>
-							<li class="fragment green">⇒ <code>#attached</code> asset libraries solve that</li>
+							<li class="fragment">⇒ Global state: impossible to cache</li>
+							<li class="fragment">⇒ <code>#attached</code> asset libraries solve that</li>
 						</ul>
 					</section>
 					<section>
@@ -306,13 +306,13 @@
 					<section>
 						<h3>2.</h3>
 						<blockquote>Is this something that's expensive to render, and therefore is worth caching?</blockquote>
-						<p>↪︎ If "yes": <strong>cache keys</strong></p>
+						<p>↪︎ If "yes": <strong>cache keys</strong>.</p>
 						<pre class="fragment" style="margin-top: 3em; width: 70%"><code class="php">$build['#cache']['keys'] = ['node', 5, 'teaser'];</code></pre>
 					</section>
 					<section>
 						<h3>3.</h3>
 						<blockquote>Does the representation of the thing I'm rendering vary per combination of permissions, per URL, per interface language, per … something?</blockquote>
-						<p>↪︎ If "yes": <strong>cache contexts</strong></p>
+						<p>↪︎ If "yes": <strong>cache contexts</strong>.</p>
 						<pre class="fragment" style="margin-top: 3em; width: 70%"><code class="php">$build['#cache']['contexts'][] = 'user.permissions';
 $build['#cache']['contexts'][] = 'url';
 </code></pre>
@@ -321,7 +321,7 @@ $build['#cache']['contexts'][] = 'url';
 					<section>
 						<h3>4.</h3>
 						<blockquote>What causes the representation of the thing I'm rendering become outdated?</blockquote>
-						<p>↪︎ If "yes": <strong>cache tags</strong></p>
+						<p>↪︎ If "yes": <strong>cache tags</strong>.</p>
 						<pre class="fragment" style="margin-top: 3em; width: 70%"><code class="php">$build['#cache']['tags'][] = 'node:5';
 $build['#cache']['tags'][] = 'user:3';
 $build['#cache']['tags'][] = 'taxonomy_term:23';
@@ -413,7 +413,7 @@ $this->renderer->addCacheableDependency($build, $site_config)</code></pre>
 						</ol>
 					</section>
 					<section>
-						<p><em>Zero latency</em></p>
+						<p><em>Zero latency!</em></p>
 						<aside class="notes">
 							You can't get any closer to the user!
 						</aside>
