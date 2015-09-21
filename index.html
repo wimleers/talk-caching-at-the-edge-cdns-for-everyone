@@ -166,6 +166,16 @@
 							For authenticated users — or really, personalized pages in general — we have cache contexts. They reflect request context dependencies. This ensures the CDN can still cache pages that are not actually personalized, or for advanced setups, it can actually cache personalized parts of the page right in the CDN.
 						</aside>
 					</section>
+					<section>
+						<table>
+							<tr><td style="border-bottom: none;">cache tags</td><td style="border-bottom: none;">➞</td><td style="border-bottom: none;"><em>invalidate tag <code>X</code></em></td></tr>
+							<tr><td style="border-bottom: none;">cache contexts</td><td style="border-bottom: none;">➞</td><td style="border-bottom: none;"><em>know what to <code>Vary</code> by</em></td></tr>
+							<tr><td colspan="2"></td><td><em>if it varies too much, placeholder it</em></td></tr>
+						</table>
+						<aside class="notes">
+							When a particular part of the page varies too much, such as something that varies by user or by session, that makes it very inefficient to cache that part of the page as part of the overall page: it'd mean we have to cache the <em>containing page</em> per user. It'd be much better if we can cache the containing page across all users, have a placeholder there instead, and then cache only that part per user. It means we have to do <em>some</em> work on every page load, but still far less!
+						</aside>
+					</section>
 				</section>
 
 				<!-- Wim -->
