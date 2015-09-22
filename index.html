@@ -228,11 +228,109 @@
 				</section>
 				
 				<section>
-					<p>And now… an even cooler demo!</p>
+					<p>And now… something even cooler!</p>
 				</section>
 
 				<!-- Fabian -->
 				<section>
+					<section>
+						<h2>Authenticated user caching</h2>
+						<h3>- in the edge -</h3>
+					</section>
+					<section>
+						<h1>MOTIVATION</h1>
+					</section>
+					<section>
+						<h2>Very Common Scenario</h2>
+						<ul>
+							<li>Anonymous users</li>
+							<li>Varnish</li>
+							<li>FAST!</li>
+							<li class="fragment">Wim just showed that.</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Very Common Scenario</h2>
+						<img src="img/HappyVarnish.png" height="500" />
+					</section>
+					<section>
+						<h2>CDN</h2>
+						<img src="img/HappyCDN.png" height="500" />
+					</section>
+					<section>
+						<h2>Everything is great!</h2>
+					</section>
+					<section>
+						<h2>The company is flourishing!</h2>
+					</section>
+					<section>
+						<h2>And they lived happily ever ...</h2>
+						<h3 class="fragment">WAIT!</h3>
+					</section>
+					<section>
+						<p>Because on one fateful day ...</p>
+					</section>
+					<section>
+						<p>... a shopping cart was added to the site.</p>
+					</section>
+					<section>
+						<p>And then it looked like this:</p>
+					</section>
+					<section>
+						<h2>Shopping Cart to drive sales ...</h2>
+						<img src="img/UnhappyVarnish.png" height="500" />
+					</section>
+					<section>
+						<p>And the webserver ran away screaming in terror and was never to be found again.</p>
+					</section>
+					<section>
+						<p>You don't believe me?</p>
+						<p class="fragment">Lets test that out ...</p>
+					</section>
+					<section>
+						<h2>Scenario</h2>
+						<ul>
+							<li>Drupal 8</li>
+							<li>Authenticated users</li>
+							<li>CDN (Fastly) - not cacheable</li>
+						</ul>
+					</section>
+					<section>
+						<video src="screaming web - turbobytes.mov" controls>
+					</section>
+					<section>
+						<video src="screaming web - ab.mov" controls>
+					</section>
+					<section>
+						<p>Site is fast (180 ms), but the user experience is poor.</p>
+						<h2 class="fragment">I don't want that ...</h2>
+						<h2 class="fragment">Why does that happen?</h2>
+					</section>
+					<section>
+						<h2>Pages are: Static + Dynamic<h2>
+						<img src="img/DynamicOverview.png" height="500" />
+					</section>
+					<section>
+						<h2>Pages have dynamic parts<h2>
+						<img src="img/DynamicSlow.png" height="500" />
+					</section>
+					<section>
+						<h2>Pages are too dynamic<h2>
+						<img src="img/DynamicTooMany.png" height="500" />
+					</section>
+					<section>
+						<p>But!</p>
+					</section>
+					<section>
+						<p>Fortunately!</p>
+					</section>
+					<section>
+						<p>Drupal 8 has a solution for that.</p>
+						<p class="fragment">- and its already in Core!</p>
+					</section>
+					<section>
+						<h2>Placeholders and Auto-Placeholdering!</h2>
+					</section>
 					<section>
 						<h2>Demo 2: auth traffic</h2>
 						<p><em>↪ cache tags + cache contexts</em></p>
