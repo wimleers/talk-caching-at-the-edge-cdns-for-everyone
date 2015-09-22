@@ -228,11 +228,143 @@
 				</section>
 				
 				<section>
-					<p>And now… an even cooler demo!</p>
+					<p>And now… something even cooler!</p>
 				</section>
 
 				<!-- Fabian -->
 				<section>
+					<section>
+						<h2>Authenticated user caching</h2>
+						<h3>- in the edge -</h3>
+					</section>
+					<section>
+						<h1>MOTIVATION</h1>
+					</section>
+					<section>
+						<h2>Very Common Scenario</h2>
+						<ul>
+							<li>Anonymous users</li>
+							<li>Varnish</li>
+							<li>FAST!</li>
+							<li class="fragment">Wim just showed that.</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Very Common Scenario</h2>
+						<img src="img/HappyVarnish.png" height="500" />
+					</section>
+					<section>
+						<h2>CDN</h2>
+						<img src="img/HappyCDN.png" height="500" />
+					</section>
+					<section>
+						<h2>Everything is great!</h2>
+					</section>
+					<section>
+						<h2>The company is flourishing!</h2>
+					</section>
+					<section>
+						<h2>And they lived happily ever ...</h2>
+						<h3 class="fragment">WAIT!</h3>
+					</section>
+					<section>
+						<p>Because one fateful day ...</p>
+					</section>
+					<section>
+						<p>... a shopping cart was added to the site.</p>
+					</section>
+					<section>
+						<p>And then it looked like this:</p>
+					</section>
+					<section>
+						<h2>Shopping Cart to drive sales ...</h2>
+						<img src="img/UnhappyVarnish.png" height="500" />
+					</section>
+					<section>
+						<p>And the webserver ran away screaming in terror and was never to be found again.</p>
+					</section>
+					<section>
+						<p>You don't believe me?</p>
+						<p class="fragment">Let's test that out ...</p>
+					</section>
+					<section>
+						<h2>Scenario</h2>
+						<ul>
+							<li>Drupal 8</li>
+							<li>Authenticated users</li>
+							<li>CDN (Fastly) - not cacheable</li>
+						</ul>
+					</section>
+					<section>
+						<video src="screaming web - turbobytes.mov" controls>
+					</section>
+					<section>
+						<video src="screaming web - ab.mov" controls>
+					</section>
+					<section>
+						<p>Site is fast (180 ms), but the user experience is poor.</p>
+						<h2 class="fragment">I don't want that ...</h2>
+						<h2 class="fragment">Why does that happen?</h2>
+					</section>
+					<section>
+						<h2>Pages are: Static + Dynamic<h2>
+						<img src="img/DynamicOverview.png" height="500" />
+					</section>
+					<section>
+						<h2>Pages have dynamic parts<h2>
+						<img src="img/DynamicSlow.png" height="500" />
+					</section>
+					<section>
+						<h2>Pages are too dynamic<h2>
+						<img src="img/DynamicTooMany.png" height="500" />
+					</section>
+					<section>
+						<p>So let's make the pages less dynamic</p>
+						<h2>Problem solved!</h2>
+					</section>
+					<section>
+						<h2>UHM ...</h2>
+					</section>
+					<section>
+						<h2>WAIT!</h2>
+						<p class="fragment">But the Web 3.0 is all about personalized experiences!</p>
+						<p class="fragment">I need dynamic pages!</p>
+						<p class="fragment">Or I go back to plain HTML!</p>
+						<p class="fragment">And don't forget about my shopping cart!</p>
+					</section>
+					<section>
+						<p>Fortunately!</p>
+					</section>
+					<section>
+						<p>Drupal 8 has a solution for that!</p>
+						<p class="fragment">- and it is already in Core!</p>
+					</section>
+					<section>
+						<h2>Placeholders and Auto-Placeholdering!</h2>
+					</section>
+					<section>
+						<h2>No more of this!<h2>
+						<img src="img/DynamicNoMore.png" height="500" />
+					</section>
+					<section>
+						<h2>Drupal 8 knows your page<h2>
+						<img src="img/CacheContexts.png" height="500" />
+					</section>
+					<section>
+						<h2>It can automatically placeholder<h2>
+						<img src="img/Placeholdering.png" height="500" />
+					</section>
+					<section>
+						<h2>And now we can use ESI!</h2>
+						<ul>
+							<li>Enable esi-8.x-1.x (fork; not yet released)</li>
+							<li class="fragment">Edge-Side includes is placeholder replacing at the edge.</li>
+							<li class="fragment"><small><code>&lt;esi:include src="/esi-fragment/esi_6c9ad036c5adf37bf37b298179985d4002185c82" /&gt;</code></small></li>
+						</ul>
+					</section>
+					<section>
+						<h2>And we can use ESI with a CDN, too!</h2>
+					</section>
 					<section>
 						<h2>Demo 2: auth traffic</h2>
 						<p><em>↪ cache tags + cache contexts</em></p>
@@ -243,8 +375,41 @@
 						</ul>
 					</section>
 					<section>
+						<h2>Fastly</h2>
+						<ul>
+							<li>Powers ftp.drupal.org</li>
+							<li class="fragment">Helped us optimize the VCL</li>
+						</ul>
+
+					</section>
+					<section>
+						<h2>Easy to set up</h2>
+						<p>Works for anonymous users out of the box.</p>
+						<img src="img/fastly-configuration.png" height="400" />
+					</section>
+					<section>
+						<h2>Upload custom VCL</h2>
+						<p>Needed for authenticated user caching.</p>
+						<img src="img/fastly-custom-vcl.png" height="300" />
+					</section>
+					<section>
+						<h2>So let's see!</h2>
+					</section>
+					<section>
+						<video src="happy webserver - turbobytes.mov" controls>
+					</section>
+					<section>
+						<video src="happy webserver - ab.mov" controls>
+					</section>
+					<section>
+						<h2>ESI with auth caching</h2>
+						<img src="img/HappyESI.png" height="500" />
+					</section>
+<!--
+					<section>
 						<p>Demo!</p>
 					</section>
+-->
 					<section>
 						<p>Standardized solution for a complex problem.</p>
 						<p><del>Out of</del> <ins>Within</ins> reach for 99%.</p>
