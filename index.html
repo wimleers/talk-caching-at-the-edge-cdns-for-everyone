@@ -176,12 +176,20 @@
 							When a particular part of the page varies too much, such as something that varies by user or by session, that makes it very inefficient to cache that part of the page as part of the overall page: it'd mean we have to cache the <em>containing page</em> per user. It'd be much better if we can cache the containing page across all users, have a placeholder there instead, and then cache only that part per user. It means we have to do <em>some</em> work on every page load, but still far less!
 						</aside>
 					</section>
+					<section>
+						<p>On a <code>Response</code>:</p>
+						<ul>
+							<li><code>X-Drupal-Cache-Tags</code> header</li>
+							<li><code>X-Drupal-Cache-Contexts</code> header</li>
+						</ul>
+					</section>
 				</section>
 
 				<!-- Wim -->
 				<section>
 					<section>
 						<h2>Demo 1: anon traffic</h2>
+						<p><em>↪ cache tags</em></p>
 						<ul>
 							<li>Drupal 8 beta 15</li>
 							<li class="fragment">CloudFlare module — <a href="https://github.com/d8-contrib-modules/cloudflare">GH/d8-contrib-modules/cloudflare</a></li>
@@ -201,14 +209,16 @@
 					<section>
 						<p><em>Near future…</em></p>
 						<p class="fragment">Trivial.</p>
-						<p class="fragment">&lt;10 €/month: cached locally (Varnish)</p>
-						<p class="fragment">&lt;100 €/month: cached worldwide (CDN)</p>
+						<p class="fragment">Affordable for all: cached locally in Varnish</p>
+						<p class="fragment">Affordable for many: cached worldwide (CDN)</p>
 						<aside class="notes">
 							Hosting providers with Varnish and potentially even a CDN could make for super affordable, super fast Drupal 8-powered websites!
 						</aside>
 					</section>
 					<section>
 						<p><em>Invalidation solved: benefits everyone!</em></p>
+					</section>
+					<aside class="notes">
 						<ul>
 							<li>Large sites: millions of pages/month.</li>
 							<li>Medium sites: stay online during media coverage.</li>
@@ -218,13 +228,14 @@
 				</section>
 				
 				<section>
-					<p>And now… the demo you've all been waiting for!</p>
+					<p>And now… an even cooler demo!</p>
 				</section>
 
 				<!-- Fabian -->
 				<section>
 					<section>
 						<h2>Demo 2: auth traffic</h2>
+						<p><em>↪ cache tags + cache contexts</em></p>
 						<ul>
 							<li>Drupal 8 beta 15</li>
 							<li class="fragment">Fastly module — <a href="https://www.drupal.org/project/fastly">d.o/project/fastly</a></li>
@@ -401,6 +412,9 @@ $this->renderer->addCacheableDependency($build, $site_config)</code></pre>
 						<p>Come see our other session tomorrow!</p>
 						<p><a href="https://events.drupal.org/barcelona2015/sessions/making-drupal-fly-fastest-drupal-ever-here">Making Drupal fly - The fastest Drupal ever is here!</a></p>
 					</section>
+					<section>
+						<video src="SingleFlush versus BigPipe.mp4" controls>
+					</section>
 				</section>
 				
 				<!-- Wim -->
@@ -414,13 +428,6 @@ $this->renderer->addCacheableDependency($build, $site_config)</code></pre>
 					<section>
 						<p>A client-side reverse proxy!</p>
 						<p>Logic defined in JavaScript!</p>
-					</section>
-					<section>
-						<ol style="min-width: 17em">
-							<li>Cache pages on the client</li>
-							<li>Send cache tag invalidations to clients</li>
-							<li>Pages cached invalidated on the client</li>
-						</ol>
 					</section>
 					<section>
 						<p><em>Zero latency!</em></p>
