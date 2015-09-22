@@ -238,12 +238,12 @@
 						<h3>- in the edge -</h3>
 					</section>
 					<section>
-						<h1>MOTIVATION</h1>
+						<h2>MOTIVATION</h2>
 					</section>
 					<section>
 						<h2>Very Common Scenario</h2>
 						<ul>
-							<li>Anonymous users</li>
+							<li><em>Only</em> anonymous users</li>
 							<li>Varnish</li>
 							<li>FAST!</li>
 							<li class="fragment">Wim just showed that.</li>
@@ -264,20 +264,17 @@
 						<h2>The company is flourishing!</h2>
 					</section>
 					<section>
-						<h2>And they lived happily ever ...</h2>
+						<h2>And they lived happily ever …</h2>
 						<h3 class="fragment">WAIT!</h3>
 					</section>
 					<section>
-						<p>Because one fateful day ...</p>
+						<p>Because one fateful day …</p>
 					</section>
 					<section>
 						<p>... a shopping cart was added to the site.</p>
 					</section>
 					<section>
 						<p>And then it looked like this:</p>
-					</section>
-					<section>
-						<h2>Shopping Cart to drive sales ...</h2>
 						<img src="img/UnhappyVarnish.png" height="500" />
 					</section>
 					<section>
@@ -285,14 +282,14 @@
 					</section>
 					<section>
 						<p>You don't believe me?</p>
-						<p class="fragment">Let's test that out ...</p>
+						<p class="fragment">Let's test that …</p>
 					</section>
 					<section>
 						<h2>Scenario</h2>
 						<ul>
 							<li>Drupal 8</li>
 							<li>Authenticated users</li>
-							<li>CDN (Fastly) - not cacheable</li>
+							<li>CDN (Fastly) — not cacheable by default</li>
 						</ul>
 					</section>
 					<section>
@@ -303,11 +300,11 @@
 					</section>
 					<section>
 						<p>Site is fast (180 ms), but the user experience is poor.</p>
-						<h2 class="fragment">I don't want that ...</h2>
+						<h2 class="fragment">I don't want that …</h2>
 						<h2 class="fragment">Why does that happen?</h2>
 					</section>
 					<section>
-						<h2>Pages are: Static + Dynamic<h2>
+						<h2>Pages are Static + Dynamic<h2>
 						<img src="img/DynamicOverview.png" height="500" />
 					</section>
 					<section>
@@ -323,21 +320,21 @@
 						<h2>Problem solved!</h2>
 					</section>
 					<section>
-						<h2>UHM ...</h2>
+						<h2>UHM …</h2>
 					</section>
 					<section>
 						<h2>WAIT!</h2>
 						<p class="fragment">But the Web 3.0 is all about personalized experiences!</p>
 						<p class="fragment">I need dynamic pages!</p>
-						<p class="fragment">Or I go back to plain HTML!</p>
+						<p class="fragment">Or I am back to using plain HTML!</p>
 						<p class="fragment">And don't forget about my shopping cart!</p>
 					</section>
 					<section>
 						<p>Fortunately!</p>
 					</section>
 					<section>
-						<p>Drupal 8 has a solution for that!</p>
-						<p class="fragment">- and it is already in Core!</p>
+						<p><em>Drupal 8 has a solution for that!</em></p>
+						<p class="fragment">… and it is already in core!</p>
 					</section>
 					<section>
 						<h2>Placeholders and Auto-Placeholdering!</h2>
@@ -357,9 +354,9 @@
 					<section>
 						<h2>And now we can use ESI!</h2>
 						<ul>
-							<li>Enable esi-8.x-1.x (fork; not yet released)</li>
-							<li class="fragment">Edge-Side includes is placeholder replacing at the edge.</li>
-							<li class="fragment"><small><code>&lt;esi:include src="/esi-fragment/esi_6c9ad036c5adf37bf37b298179985d4002185c82" /&gt;</code></small></li>
+							<li>Enable <code>esi-8.x-1.x</code> (fork; not yet released)</li>
+							<li class="fragment">Edge-Side Includes replaces placeholders at the edge.</li>
+							<li class="fragment"><pre><code class="html">&lt;esi:include src="/esi-fragment/esi_6c9a85d4002185c82" /&gt;</code></pre></li>
 						</ul>
 					</section>
 					<section>
@@ -455,14 +452,7 @@
 									<li class="fragment">HTTPS configuration
 									<li class="fragment">clean URL configuration
 									<li class="fragment">current site in multisite
-									<li class="fragment">current host name
-									<li class="fragment">path processing
-										<ul>
-											<li class="fragment">negotiated interface language
-											<li class="fragment">negotiated URL language
-											<li class="fragment">…</li>
-										</ul>
-									</li>
+									<li class="fragment">…</li>
 								</ul>
 							</li>
 							<li class="fragment red">⇒ impossible to <del>cache</del> <ins>invalidate</ins></li>
@@ -536,37 +526,6 @@ $build['#cache']['tags'][] = 'taxonomy_term:23';
 								<li>…</li>
 							</ul>
 						</div>
-					</section>
-					<section>
-						<p>To make it easier:</p>
-						<p><small><code class="php">Renderer::addCacheableDependency($build, $dependency)</code></small></p>
-						<pre class="fragment"><code class="php">$site_config = $this->config->get('system.site');
-
-$build = [
-  '#markup' => t('Welcome to @site, @user!', $site_config->get('name')),
-];
-$this->renderer->addCacheableDependency($build, $site_config)</code></pre>
-					</section>
-					<section>
-						<img src="img/ideal-case.jpg" />
-					</section>
-					<section>
-						<h3>If Drupal pages were ships…</h3>
-						<p>(Drupal rendering a page ~ building a ship)</p>
-					</section>
-					<section>
-						<h3>… then this could be Drupal 8…</h3>
-						<figure>
-							<img src="img/lego-ship-drupal8.jpg">
-							<figcaption>Assembled from components. Clear dependencies.</figcaption>
-						</figure>
-					</section>
-					<section>
-						<h3>… and this would be Drupal 7</h3>
-						<figure>
-							<img src="img/lego-ship-drupal7.jpg">
-							<figcaption>Assembled from seemingly random pieces. <em>But it is a boat!</em></figcaption>
-						</figure>
 					</section>
 				</section>
 
